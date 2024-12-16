@@ -17,6 +17,9 @@
       exit;
    }
 
+   // set the response header to application/json
+   // this is necessary because the response is in json format
+   header("Content-type: application/json; charset=UTF-8");
    // task controller
    $taskController = new TaskController();
    // call the task controller method processRequest and pass the request method and id
