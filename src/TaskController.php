@@ -1,4 +1,5 @@
 <?php 
+namespace Seavseyla\Restapi;
     class TaskController{
         public function processRequest($method, $id){
             if($id === null){
