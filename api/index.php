@@ -1,6 +1,5 @@
 <?php 
    require dirname(__DIR__) . "/vendor/autoload.php";
-   use Seavseyla\Restapi\TaskController;
 
    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
    $parts = explode('/', $path);
