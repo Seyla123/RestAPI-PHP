@@ -22,7 +22,13 @@
       http_response_code(404);
       exit;
    }
-
+   $api_key = $_SERVER['HTTP_X_API_KEY'] ?? null;
+   if(empty($api_key)){
+      http_response_code(400);
+      echo json_encode(["message" => "Missing API Key"]);
+   }
+   echo $api_key;
+   exit;
    // set the response header to application/json
    // this is necessary because the response is in json format
    header("Content-type: application/json; charset=UTF-8");
