@@ -26,9 +26,11 @@ if(!$auth->authenticateAPIkey()) {
    exit;
 };
 
+$user_id = $auth->getUserId();
+
 // task gateway
 $task_gateway = new TaskGateway($database);
 // task controller
-$taskController = new TaskController($task_gateway);
+$taskController = new TaskController($task_gateway, $user_id);
 // call the task controller method processRequest and pass the request method and id
 $taskController->processRequest($_SERVER['REQUEST_METHOD'], $id);

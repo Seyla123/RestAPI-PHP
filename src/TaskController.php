@@ -1,7 +1,9 @@
 <?php
     class TaskController
     {
-        public function __construct(private TaskGateway $gateway)
+        public function __construct(
+            private TaskGateway $gateway,
+            private int $user_id)
         {
 
         }
@@ -10,7 +12,7 @@
             if ($id === null) {
                 switch ($method) {
                     case 'GET':
-                        echo json_encode($this->gateway->getAll());
+                        echo json_encode($this->gateway->getAllForUser($this->user_id));
                         break;
                     case 'POST':
                         $data = (array) json_decode(file_get_contents("php://input"), true);

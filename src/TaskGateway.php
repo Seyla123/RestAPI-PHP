@@ -6,10 +6,12 @@ class TaskGateway
     {
         $this->conn = $database->getConnection();
     }
-    public function getAll(): array
+    public function getAllForUser($user_id): array
     {
-        $sql = "SELECT * FROM task ORDER BY id Desc";
-        $stmt = $this->conn->query($sql);
+        $sql = "SELECT * FROM task WHERE user_id = :user_id ORDER BY id Desc";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
         $data = [];
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $row['is_completed'] = (bool) $row['is_completed'];
