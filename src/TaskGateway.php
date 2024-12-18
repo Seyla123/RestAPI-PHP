@@ -19,11 +19,12 @@ class TaskGateway
         }
         return $data;
     }
-    public function get(string $id): array | false
+    public function getForUser(int $user_id, string $id): array | false
     {
-        $sql  = "SELECT * FROM task WHERE id = :id";
+        $sql  = "SELECT * FROM task WHERE id = :id AND user_id = :user_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
 
         $data = $stmt->fetch(PDO::FETCH_ASSOC);

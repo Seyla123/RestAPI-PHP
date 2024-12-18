@@ -29,13 +29,13 @@
                         break;
                 }
             } else {
-                if($this->gateway->get($id) === false) {
+                if($this->gateway->getForUser($this->user_id,$id) === false) {
                     $this->respondNotFound($id);
                     return;
                 }
                 switch ($method) {
                     case 'GET':
-                        echo json_encode($this->gateway->get($id));
+                        echo json_encode($this->gateway->getForUser($this->user_id, $id));
                         break;
                     case 'PUT':
                         $data = (array) json_decode(file_get_contents("php://input"), true);
