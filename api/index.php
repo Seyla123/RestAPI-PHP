@@ -20,6 +20,9 @@
    // set the response header to application/json
    // this is necessary because the response is in json format
    header("Content-type: application/json; charset=UTF-8");
+   // database connection
+   $database = new Database("localhost", "api_db", "api_db_user", "Seyla758@");
+   $database->getConnection();
    // task controller
    $taskController = new TaskController();
    // call the task controller method processRequest and pass the request method and id
