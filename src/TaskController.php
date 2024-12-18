@@ -10,19 +10,25 @@
             if ($id === null) {
                 switch ($method) {
                     case 'GET':
-                        echo "GET All Tasks";
+                        echo json_encode($this->gateway->getAll());
                         break;
                     case 'POST':
-                        echo "Create Task";
+                        $data = (array) json_decode(file_get_contents("php://input"), true);
+                        $id = $this->gateway->create($data);
+                        $this->responseCreated($id);
                         break;
                     default:
                         $this->responseMethodNotAllowed("GET, POST");
                         break;
                 }
             } else {
+                if($this->gateway->get($id) === false) {
+                    $this->responseNotFound($id);
+                    return;
+                }
                 switch ($method) {
                     case 'GET':
-                        echo "GET One Task : ", $id;
+                        echo json_encode($this->gateway->get($id));
                         break;
                     case 'PUT':
                         echo "Update Task : ", $id;
@@ -41,6 +47,20 @@
             http_response_code(405);
             header("Allow: {$allowedMethods}");	
             echo "Method Not Allowed";
+        }
+        private function responseNotFound(string $id): void
+        {
+            http_response_code(404);
+            echo json_encode([
+                "message"=>"Task with ID $id not found"
+            ]);
+        }
+        private function responseCreated(string $id): void
+        {
+            http_response_code(201);
+            echo json_encode([
+                "message"=>"Task created with ID $id"
+            ]);
         }
     }
 ?>
