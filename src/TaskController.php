@@ -21,7 +21,7 @@
                             $this->respondUnprocessableEnity($errors);
                             return;
                         }
-                        $id = $this->gateway->create($data);
+                        $id = $this->gateway->createForUser($this->user_id,$data);
                         $this->respondCreated($id);
                         break;
                     default:
