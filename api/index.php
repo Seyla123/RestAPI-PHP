@@ -26,8 +26,10 @@
    header("Content-type: application/json; charset=UTF-8");
    // database connection
    $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+   // task gateway
+   $task_gateway = new TaskGateway($database);
    // task controller
-   $taskController = new TaskController();
+   $taskController = new TaskController($task_gateway);
    // call the task controller method processRequest and pass the request method and id
    $taskController->processRequest($_SERVER['REQUEST_METHOD'], $id);
 ?>
