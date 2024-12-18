@@ -3,15 +3,8 @@
 declare(strict_types=1);
 // ini_set("display_errors", "On");
 
-// autoloader
-require dirname(__DIR__) . "/vendor/autoload.php";
-
-set_error_handler("ErrorHandler::handleError");
-set_exception_handler("ErrorHandler::handleException");
-
-// load the .env file
-$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
+// include bootstrap
+require __DIR__ . "/bootstrap.php";
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $parts = explode('/', $path);
@@ -25,9 +18,6 @@ if ($resource !== 'task') {
 $api_key = $_SERVER['HTTP_X_API_KEY'] ?? null;
 // database connection
 $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-// set the response header to application/json
-// this is necessary because the response is in json format
-header("Content-type: application/json; charset=UTF-8");
 
 if (empty($api_key)) {
    http_response_code(400);
