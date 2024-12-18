@@ -14,16 +14,21 @@
                         break;
                     case 'POST':
                         $data = (array) json_decode(file_get_contents("php://input"), true);
+                        $errors = $this->getValidationErrors($data);
+                        if(!empty($errors)) {
+                            $this->respondUnprocessableEnity($errors);
+                            return;
+                        }
                         $id = $this->gateway->create($data);
-                        $this->responseCreated($id);
+                        $this->respondCreated($id);
                         break;
                     default:
-                        $this->responseMethodNotAllowed("GET, POST");
+                        $this->respondMethodNotAllowed("GET, POST");
                         break;
                 }
             } else {
                 if($this->gateway->get($id) === false) {
-                    $this->responseNotFound($id);
+                    $this->respondNotFound($id);
                     return;
                 }
                 switch ($method) {
@@ -31,36 +36,66 @@
                         echo json_encode($this->gateway->get($id));
                         break;
                     case 'PUT':
-                        echo "Update Task : ", $id;
+                        $data = (array) json_decode(file_get_contents("php://input"), true);
+                        $errors = $this->getValidationErrors($data, false);
+                        if(!empty($errors)) {
+                            $this->respondUnprocessableEnity($errors);
+                            return;
+                        }
+                        $row = $this->gateway->update($id, $data);
+                        echo json_encode([
+                            "message" => "Task updated with ID $id",
+                            "row" => $row
+                        ]);
                         break;
                     case 'DELETE':
                         echo "Delete Task : ", $id;
                         break;
                     default:
-                        $this->responseMethodNotAllowed("GET, PUT, DELETE");
+                        $this->respondMethodNotAllowed("GET, PUT, DELETE");
                         break;
                 }
             }
         }
-        private function responseMethodNotAllowed(string $allowedMethods): void
+        private function respondUnprocessableEnity(array $errors): void
+        {
+            http_response_code(422);
+            echo json_encode([
+                "errors" => $errors
+            ]);
+        }
+        private function respondMethodNotAllowed(string $allowedMethods): void
         {
             http_response_code(405);
             header("Allow: {$allowedMethods}");	
             echo "Method Not Allowed";
         }
-        private function responseNotFound(string $id): void
+        private function respondNotFound(string $id): void
         {
             http_response_code(404);
             echo json_encode([
                 "message"=>"Task with ID $id not found"
             ]);
         }
-        private function responseCreated(string $id): void
+        private function respondCreated(string $id): void
         {
             http_response_code(201);
             echo json_encode([
                 "message"=>"Task created with ID $id"
             ]);
+        }
+        private function getValidationErrors(array $data, bool $is_new = true): array
+        {
+            $errors = [];
+
+            if($is_new && empty($data['name'])) {
+                $errors[] = "Name is required";
+            }
+
+            if(!empty($data['priority']) && filter_var($data['priority'], FILTER_VALIDATE_INT) === false) {
+                $errors[] = "Priority must be an integer";
+            }
+            return $errors;
         }
     }
 ?>
