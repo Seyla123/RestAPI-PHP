@@ -44,7 +44,7 @@
                             $this->respondUnprocessableEnity($errors);
                             return;
                         }
-                        $row = $this->gateway->update($id, $data);
+                        $row = $this->gateway->updateForUser($this->user_id,$id, $data);
                         echo json_encode([
                             "message" => "Task updated with ID $id",
                             "row" => $row

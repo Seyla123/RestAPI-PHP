@@ -54,7 +54,7 @@ class TaskGateway
 
         return $this->conn->lastInsertId();
     }
-    public function update(string $id, array $data): int
+    public function updateForUser(int $user_id,string $id, array $data): int
     {
         $fields = [];
 
@@ -80,10 +80,12 @@ class TaskGateway
             $sql = "UPDATE task"
             . " SET " 
             . implode(',', $sets)
-            . " WHERE id = :id";
+            . " WHERE id = :id AND user_id = :user_id";
 
             $stmt = $this->conn->prepare($sql);
             $stmt -> bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+
 
             foreach($fields as $name => $values) {
                 $stmt -> bindValue(":$name", $values[0], $values[1]);
