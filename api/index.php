@@ -7,6 +7,10 @@
    require dirname(__DIR__) . "/vendor/autoload.php";
    set_exception_handler("ErrorHandler::handleException");
 
+   // load the .env file
+   $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+   $dotenv->load();
+
    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
    $parts = explode('/', $path);
    $resource = $parts[2] ?? null;
@@ -21,7 +25,7 @@
    // this is necessary because the response is in json format
    header("Content-type: application/json; charset=UTF-8");
    // database connection
-   $database = new Database("localhost", "api_db", "api_db_user", "Seyla758@");
+   $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
    $database->getConnection();
    // task controller
    $taskController = new TaskController();
