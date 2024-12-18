@@ -51,7 +51,7 @@
                         ]);
                         break;
                     case 'DELETE':
-                        $row = $this->gateway->delete($id);
+                        $row = $this->gateway->deleteForUser($this->user_id,$id);
                         echo json_encode([
                             "message" => "Task deleted with ID $id",
                             "row" => $row

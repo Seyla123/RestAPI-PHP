@@ -95,11 +95,13 @@ class TaskGateway
             return $stmt->rowCount();
         }
     }
-    public function delete(string $id): int
+    public function deleteForUser(int $user_id,string $id): int
     {
-        $sql = "DELETE FROM task WHERE id = :id";
+        $sql = "DELETE FROM task WHERE id = :id AND user_id = :user_id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+
         $stmt->execute();
         return $stmt->rowCount();
     }
