@@ -1,7 +1,7 @@
 <?php
     class TaskController
     {
-        public function processRequest(string $method, string $id): void
+        public function processRequest(string $method, ?string $id): void
         {
             if ($id === null) {
                 switch ($method) {
@@ -12,8 +12,7 @@
                         echo "Create Task";
                         break;
                     default:
-                        http_response_code(405);
-                        echo "Method Not Allowed";
+                        $this->responseMethodNotAllowed("GET, POST");
                         break;
                 }
             } else {
@@ -28,11 +27,16 @@
                         echo "Delete Task : ", $id;
                         break;
                     default:
-                        http_response_code(405);
-                        echo "Method Not Allowed";
+                        $this->responseMethodNotAllowed("GET, PUT, DELETE");
                         break;
                 }
             }
+        }
+        private function responseMethodNotAllowed(string $allowedMethods): void
+        {
+            http_response_code(405);
+            header("Allow: {$allowedMethods}");	
+            echo "Method Not Allowed";
         }
     }
 ?>
