@@ -39,5 +39,5 @@ if ($user === false) {
     exit;
 }
 
-var_dump($user);
+require __DIR__ . "/tokens.php";
 ?>
