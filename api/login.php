@@ -35,10 +35,11 @@ if (!password_verify($data['password'], $user['password_hash'])) {
 }
 
 $payload = [
-    "id" => $user['id'],
-    "name" => $user['name']
+    "sub" => $user['id'],
+    "name" => $user['name'],
+    "exp"=> time() + 20
 ];
-
-$access_token = base64_encode(json_encode($payload));
+$codec = new JWTCodec($_ENV["JWT_SECRET_KEY"]);
+$access_token = $codec->encode($payload);
 echo json_encode(["access_token" => $access_token]);
 ?>
