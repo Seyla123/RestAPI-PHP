@@ -38,7 +38,7 @@ $payload = [
     "sub" => $user['id'],
     "name" => $user['name']
 ];
-$codec = new JWTCodec();
+$codec = new JWTCodec($_ENV["JWT_SECRET_KEY"]);
 $access_token = $codec->encode($payload);
 echo json_encode(["access_token" => $access_token]);
 ?>
