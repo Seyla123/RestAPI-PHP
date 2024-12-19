@@ -18,7 +18,9 @@ if ($resource !== 'task') {
 // database connection
 $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
 
-
+var_dump($_SERVER['HTTP_AUTHORIZATION']);
+// $headers = apache_request_headers();
+// echo $headers['Authorization'];
 // user gateway check auth
 $user_gateway = new UserGateway($database);
 $auth = new Auth($user_gateway);
