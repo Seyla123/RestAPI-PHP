@@ -3,7 +3,7 @@
 $payload = [
     "sub" => $user['id'],
     "name" => $user['name'],
-    "exp"=> time() + 20
+    "exp"=> time() + 300
 ];
 $access_token = $codec->encode($payload);
 
