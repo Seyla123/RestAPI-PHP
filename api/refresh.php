@@ -27,6 +27,17 @@ try {
 }
 
 $user_id = $payload['sub'];
-var_dump($user_id);
 
+// database connection
+$database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
+$user_gateway = new UserGateway($database);
+$user = $user_gateway->getById($user_id);
+
+if ($user === false) {
+    http_response_code(401);
+    echo json_encode(["message" => "Invalid authentication"]);
+    exit;
+}
+
+var_dump($user);
 ?>
