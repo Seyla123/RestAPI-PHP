@@ -11,10 +11,11 @@
         }
         public function create(string $token, int $expiry):bool
         {
-            $sql = "INSERT INTO refresh_tokens (token, expiry) VALUES (:token, :expiry)";
+            $hash = hash_hmac('sha256', $token, $this->secret_key);
+            $sql = "INSERT INTO refresh_token (token_hash, expires_at) VALUES (:token_hash, :expires_at)";
             $stmt = $this->conn->prepare($sql);
-            $stmt -> bindValue(':token', $token, PDO::PARAM_STR);
-            $stmt -> bindValue(':expiry', $expiry, PDO::PARAM_INT);
+            $stmt -> bindValue(':token_hash', $hash, PDO::PARAM_STR);
+            $stmt -> bindValue(':expires_at', $expiry, PDO::PARAM_INT);
             return $stmt -> execute();
         }
     }
