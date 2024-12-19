@@ -1,7 +1,9 @@
 <?php
     class TaskController
     {
-        public function __construct(private TaskGateway $gateway)
+        public function __construct(
+            private TaskGateway $gateway,
+            private int $user_id)
         {
 
         }
@@ -10,7 +12,7 @@
             if ($id === null) {
                 switch ($method) {
                     case 'GET':
-                        echo json_encode($this->gateway->getAll());
+                        echo json_encode($this->gateway->getAllForUser($this->user_id));
                         break;
                     case 'POST':
                         $data = (array) json_decode(file_get_contents("php://input"), true);
@@ -19,7 +21,7 @@
                             $this->respondUnprocessableEnity($errors);
                             return;
                         }
-                        $id = $this->gateway->create($data);
+                        $id = $this->gateway->createForUser($this->user_id,$data);
                         $this->respondCreated($id);
                         break;
                     default:
@@ -27,13 +29,13 @@
                         break;
                 }
             } else {
-                if($this->gateway->get($id) === false) {
+                if($this->gateway->getForUser($this->user_id,$id) === false) {
                     $this->respondNotFound($id);
                     return;
                 }
                 switch ($method) {
                     case 'GET':
-                        echo json_encode($this->gateway->get($id));
+                        echo json_encode($this->gateway->getForUser($this->user_id, $id));
                         break;
                     case 'PUT':
                         $data = (array) json_decode(file_get_contents("php://input"), true);
@@ -42,14 +44,14 @@
                             $this->respondUnprocessableEnity($errors);
                             return;
                         }
-                        $row = $this->gateway->update($id, $data);
+                        $row = $this->gateway->updateForUser($this->user_id,$id, $data);
                         echo json_encode([
                             "message" => "Task updated with ID $id",
                             "row" => $row
                         ]);
                         break;
                     case 'DELETE':
-                        $row = $this->gateway->delete($id);
+                        $row = $this->gateway->deleteForUser($this->user_id,$id);
                         echo json_encode([
                             "message" => "Task deleted with ID $id",
                             "row" => $row

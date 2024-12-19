@@ -1,37 +1,36 @@
-<?php 
-   // strict mode
-   declare(strict_types=1);
-   // ini_set("display_errors", "On");
-   
-   // autoloader
-   require dirname(__DIR__) . "/vendor/autoload.php";
+<?php
+// strict mode
+declare(strict_types=1);
+// ini_set("display_errors", "On");
 
-   set_error_handler("ErrorHandler::handleError");
-   set_exception_handler("ErrorHandler::handleException");
+// include bootstrap
+require __DIR__ . "/bootstrap.php";
 
-   // load the .env file
-   $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
-   $dotenv->load();
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$parts = explode('/', $path);
+$resource = $parts[2] ?? null;
+$id = $parts[3] ?? null;
 
-   $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-   $parts = explode('/', $path);
-   $resource = $parts[2] ?? null;
-   $id = $parts[3] ?? null;
-   
-   if($resource !== 'task'){
-      http_response_code(404);
-      exit;
-   }
+if ($resource !== 'task') {
+   http_response_code(404);
+   exit;
+}
+// database connection
+$database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
 
-   // set the response header to application/json
-   // this is necessary because the response is in json format
-   header("Content-type: application/json; charset=UTF-8");
-   // database connection
-   $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
-   // task gateway
-   $task_gateway = new TaskGateway($database);
-   // task controller
-   $taskController = new TaskController($task_gateway);
-   // call the task controller method processRequest and pass the request method and id
-   $taskController->processRequest($_SERVER['REQUEST_METHOD'], $id);
-?>
+
+// user gateway check auth
+$user_gateway = new UserGateway($database);
+$auth = new Auth($user_gateway);
+if(!$auth->authenticateAPIkey()) {
+   exit;
+};
+
+$user_id = $auth->getUserId();
+
+// task gateway
+$task_gateway = new TaskGateway($database);
+// task controller
+$taskController = new TaskController($task_gateway, $user_id);
+// call the task controller method processRequest and pass the request method and id
+$taskController->processRequest($_SERVER['REQUEST_METHOD'], $id);
