@@ -24,6 +24,8 @@ $auth = new Auth($user_gateway);
 if(!$auth->authenticateAccessToken()) {
    exit;
 };
+echo "Valid authentication";
+exit;
 
 $user_id = $auth->getUserId();
 
