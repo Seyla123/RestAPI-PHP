@@ -19,10 +19,9 @@ if ($resource !== 'task') {
 $database = new Database($_ENV['DB_HOST'], $_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASSWORD']);
 
 
-// user gateway check auth
 $user_gateway = new UserGateway($database);
 $auth = new Auth($user_gateway);
-if(!$auth->authenticateAPIkey()) {
+if(!$auth->authenticateAccessToken()) {
    exit;
 };
 
