@@ -28,5 +28,14 @@
 
             return $stmt->rowCount();
         }
+        public function getByToken(string $token):array | false
+        {
+            $hash = hash_hmac('sha256', $token, $this->secret_key);
+            $sql = "SELECT * FROM refresh_token WHERE token_hash = :token_hash";
+            $stmt = $this->conn->prepare($sql);
+            $stmt -> bindValue(':token_hash', $hash, PDO::PARAM_STR);
+            $stmt -> execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        }
     }
 ?>
