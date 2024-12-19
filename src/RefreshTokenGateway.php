@@ -18,5 +18,15 @@
             $stmt -> bindValue(':expires_at', $expiry, PDO::PARAM_INT);
             return $stmt -> execute();
         }
+        public function delete(string $token):int
+        {
+            $hash = hash_hmac('sha256', $token, $this->secret_key);
+            $sql = "DELETE FROM refresh_token WHERE token_hash = :token_hash";
+            $stmt = $this->conn->prepare($sql);
+            $stmt -> bindValue(':token_hash', $hash, PDO::PARAM_STR);
+            $stmt -> execute();
+
+            return $stmt->rowCount();
+        }
     }
 ?>

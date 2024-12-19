@@ -40,4 +40,8 @@ if ($user === false) {
 }
 
 require __DIR__ . "/tokens.php";
+
+$refresh_gateway = new RefreshTokenGateway($database, $_ENV["JWT_SECRET_KEY"]);
+$refresh_gateway->delete($data["token"]);
+$refresh_gateway->create($refresh_token, $refresh_token_expiry);
 ?>
