@@ -36,7 +36,8 @@ if (!password_verify($data['password'], $user['password_hash'])) {
 
 $payload = [
     "sub" => $user['id'],
-    "name" => $user['name']
+    "name" => $user['name'],
+    "exp"=> time() + 20
 ];
 $codec = new JWTCodec($_ENV["JWT_SECRET_KEY"]);
 $access_token = $codec->encode($payload);
