@@ -42,17 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = json_decode($response, true);
 
     // Handle API response
-    if (isset($result['access_token'])) {
-        // Login successful
-        echo "Login successful";
-        $access_token = $result['access_token'];
-        $refresh_token = $result['refresh_token'];
-        $refresh_token_expiry = time() + 43200;
-        setcookie("access_token", $access_token, $refresh_token_expiry, "/");
-        setcookie("refresh_token", $refresh_token, $refresh_token_expiry, "/");
-    } else {
-        // Login failed
-        echo 'Login failed: ' . $result['message'];
+    try {
+        if (isset($result['access_token'])) {
+            // Login successful
+            $access_token = $result['access_token'];
+            $refresh_token = $result['refresh_token'];
+            $refresh_token_expiry = time() + 43200;
+            setcookie("access_token", $access_token, $refresh_token_expiry, "/");
+            setcookie("refresh_token", $refresh_token, $refresh_token_expiry, "/");
+            echo "Login successful";
+        } else {
+            // Login failed
+            echo 'Login failed: ' . $result['message'];
+            throw new Exception('Login failed');
+        }
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage();
     }
 }
 ?>
