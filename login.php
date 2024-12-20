@@ -1,6 +1,9 @@
 <?php
 
 require __DIR__ . "/vendor/autoload.php";
+// load the .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -10,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $request_body = json_encode(["username" => $username, "password" => $password]);
 
     // API endpoint
-    $apiUrl = 'http://localhost/api/login.php'; // Replace with your API URL
+    $apiUrl = $_ENV["DOMAIN_URL"]; // Replace with your API URL
 
     // Initialize cURL
     $ch = curl_init();
@@ -41,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle API response
     if (isset($result['access_token'])) {
         // Login successful
+        echo "Login successful";
         $access_token = $result['access_token'];
         $refresh_token = $result['refresh_token'];
         $refresh_token_expiry = time() + 43200;
