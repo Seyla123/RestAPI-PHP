@@ -29,8 +29,14 @@ class Auth
         return $this->user_id;
     }
     public function authenticateAccessToken(): bool
-    {
-        if (!preg_match("/^Bearer\s+(.*)$/", $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
+    {   
+        $token = $_SERVER['HTTP_AUTHORIZATION'];
+        if($token===""){
+            $cookies = $_COOKIE["access_token"] ?? "";
+            $token = "Bearer " . $cookies;
+        }
+
+        if (!preg_match("/^Bearer\s+(.*)$/", $token, $matches)) {
             http_response_code(401);
             echo json_encode(["message" => "Incompleted authorization header"]);
             return false;
